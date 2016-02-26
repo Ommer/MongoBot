@@ -28,6 +28,11 @@ logging.basicConfig(level=logging.DEBUG)
 
 parser = RobotResultsParser(sys.argv[1])
 suite = parser.test_run.suite
-doc = parser._parse_suite(suite)
+doc, tests = parser._parse_suite(suite)
 
 print json.dumps(doc, indent=4, sort_keys=True)
+print 'tests...'
+print tests
+print 'sub tests...'
+print parser.test_run.suite.suites[0].tests
+print bool(parser.test_run.suite.suites[0].suites)

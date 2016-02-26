@@ -8,5 +8,3 @@ Join us on gitter at [https://gitter.im/AlahmadiKw/MongoBot](https://gitter.im/A
 
 [1]: https://github.com/robotframework/DbBot
 [2]: http://robotframework.org/
-
-

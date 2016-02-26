@@ -17,8 +17,27 @@ class RobotResultsParser(object):
         pass
 
 
+    def _traverse_suites(self, suite):
+        """ Recusivelly iterate through suites hierarchy""" 
+
+        logger.debug("traversing suite '%s'", suite.longname)
+        suite_doc, tests = self._parse_suite(suite)
+        # insert suite_doc into suites collection 
+        pass 
+
+        if not suite.suites and tests:
+            # get all test cases and insert them to mongo 
+            # update list of tests to suite doc
+            pass
+            return 
+
+        for child_suite in suite.suites:
+            self._traverse_suites(self, child_suite)
+            
+
     def _parse_suite(self, suite):
-        logger.debug('Parsing suite "%s"', suite.name)
+        logger.info('Parsing suite "%s"', suite.longname)
+
         suite_doc = {}
         suite_doc['name'] = suite.name 
         suite_doc['longname'] = suite.longname
@@ -33,17 +52,24 @@ class RobotResultsParser(object):
         suite_doc['status'] = suite.status
         suite_doc['message'] = suite.message
         suite_doc['stat_message'] = suite.stat_message
-        suite_doc['test_count'] = suite.test_count
-        # suite_doc['tests'] = suite.tests  
+        suite_doc['test_count'] = suite.test_count 
 
-        suite_doc['stats_total'] = suite.statistics.all.total
-        suite_doc['stats_passed'] = suite.statistics.all.passed
-        suite_doc['stats_failed'] = suite.statistics.all.failed
-        suite_doc['stats_critical_total'] = suite.statistics.critical.total
-        suite_doc['stats_critical_passed'] = suite.statistics.critical.passed
-        suite_doc['stats_critical_failed'] = suite.statistics.critical.failed
+        suite_doc['stats'] = \
+                  [  {'type': 'all', 
+                      'total':  suite.statistics.all.total,
+                      'passed': suite.statistics.all.passed,
+                      'failed': suite.statistics.all.failed
+                     },
+                     {'type': 'critical', 
+                      'total':  suite.statistics.critical.total,
+                      'passed': suite.statistics.critical.passed,
+                      'failed': suite.statistics.critical.failed
+                     },
+                  ]
 
-        return suite_doc
+        suite_tests = suite.tests  
+        return suite_doc, suite_tests
+
 
     def _format_robot_timestamp(self, timestamp):
         return datetime.strptime(timestamp, '%Y%m%d %H:%M:%S.%f')
