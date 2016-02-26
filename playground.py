@@ -30,4 +30,4 @@ parser = RobotResultsParser(sys.argv[1])
 suite = parser.test_run.suite
 doc = parser._parse_suite(suite)
 
-print json.dumps(doc, indent=4)
+print json.dumps(doc, indent=4, sort_keys=True)
