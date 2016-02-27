@@ -14,7 +14,7 @@ Join us on gitter at [https://gitter.im/AlahmadiKw/MongoBot](https://gitter.im/A
 
 -  `Python`__ 2.6 or newer installed
 -  `Robot Framework`_ 2.7 or newer installed
--  `pymongo'_3.2.1 or newer installed
+-  `pymongo`_3.2.1 or newer installed
 
 `Robot Framework`_ version 2.7.4 or later is recommended as versions prior to
 2.7.4 do not support storing total elapsed time for test runs or tags.
