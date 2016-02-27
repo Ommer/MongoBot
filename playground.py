@@ -2,6 +2,7 @@ import sys
 import logging
 from datetime import datetime
 import json
+import pprint
 
 from robot.api import ExecutionResult
 
@@ -28,11 +29,8 @@ logging.basicConfig(level=logging.DEBUG)
 
 parser = RobotResultsParser(sys.argv[1])
 suite = parser.test_run.suite
-doc, tests = parser._parse_suite(suite)
+doc = parser._parse_suite(suite.suites[0])
 
-print json.dumps(doc, indent=4, sort_keys=True)
-print 'tests...'
-print tests
-print 'sub tests...'
-print parser.test_run.suite.suites[0].tests
-print bool(parser.test_run.suite.suites[0].suites)
+# print pprint.pprint(doc, indent=4)
+
+parser.traverse_suites()
