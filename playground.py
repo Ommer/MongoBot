@@ -34,3 +34,4 @@ doc = parser._parse_suite(suite.suites[0])
 # print pprint.pprint(doc, indent=4)
 
 parser.traverse_suites()
+parser.suite_test_cases()

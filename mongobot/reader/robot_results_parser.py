@@ -81,18 +81,23 @@ class RobotResultsParser(object):
 
 
         suite_tests = suite.tests 
-        #
-        # formatting all test cases in dic
-        #
-        tests = self._get_tests(suite)
-        for test in tests:
-          print self._parse_test(test)
+        
         
         suite_doc['path'] = ','+re.sub(r'\.', ',', suite.longname)+','
         suite_doc['run_id'] = self.test_run_id
 
         return suite_doc
 
+    def suite_test_cases(self):
+
+        tests = self._get_tests(self.test_run.suite)
+        for test in tests:
+          test_case = self._parse_test(test)
+          logger.info('test_case "%s"', test_case)
+
+
+          
+          
     #
     # get all tests from all suites
     # return list of test cases
