@@ -49,7 +49,7 @@ class RobotResultsParser(object):
 
 
     def _parse_suite(self, suite):
-        logger.info('Parsing suite "%s"', suite.longname)
+        logger.debug('Parsing suite "%s"', suite.longname)
 
         suite_doc = {}
         suite_doc['name'] = suite.name 
@@ -88,19 +88,38 @@ class RobotResultsParser(object):
 
         return suite_doc
 
+    #
+    # Return : suties with test cases
+    #    
     def suite_test_cases(self):
 
+        suite_tests_doc ={}
+        #
+        # getting all test cases
+        #
         tests = self._get_tests(self.test_run.suite)
+        #
+        # store as { suite:[{cases},{cases},...]} 
+        #
         for test in tests:
+          #
+          # getting each test case in dictionary format
+          #
           test_case = self._parse_test(test)
-          logger.info('test_case "%s"', test_case)
+          logger.debug('test_case "%s"', test_case)
+          #
+          # store list of test cases by suite name
+          #
+          if test_case['parent'] not in suite_tests_doc:
+              suite_tests_doc.update({test_case['parent']:[test_case]})
+          else:
+              suite_tests_doc[test_case['parent']].append(test_case)
 
-
-          
+        return suite_tests_doc
           
     #
     # get all tests from all suites
-    # return list of test cases
+    # Return: list of test cases
     #
     def _get_tests(self,suite,tests=[]):
 
@@ -113,10 +132,10 @@ class RobotResultsParser(object):
         return tests
 
     #
-    # return test in dictionary 
+    # Return: test in dictionary 
     #
     def _parse_test(self,test):
-        logger.info('Parsing test: %s' % test.name) 
+        logger.debug('Parsing test: %s' % test.name) 
         
         test_doc = {}
         test_doc['doc']         = test.doc 
