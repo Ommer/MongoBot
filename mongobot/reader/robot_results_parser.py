@@ -23,10 +23,6 @@ class RobotResultsParser(object):
         logger.info('Parsing xml file for run %s' % run_name)
         # inser run_id into runs collection 
 
-    
-    def xml_to_mongodb(self):
-        pass
-
 
     def traverse_suites(self):
         self._traverse_suites(self.test_run.suite)
@@ -83,11 +79,65 @@ class RobotResultsParser(object):
                      },
                   ]
 
+
+        suite_tests = suite.tests 
+        
+        
         suite_doc['path'] = ','+re.sub(r'\.', ',', suite.longname)+','
         suite_doc['run_id'] = self.test_run_id
 
         return suite_doc
 
+    def suite_test_cases(self):
+
+        tests = self._get_tests(self.test_run.suite)
+        for test in tests:
+          test_case = self._parse_test(test)
+          logger.info('test_case "%s"', test_case)
+
+
+          
+          
+    #
+    # get all tests from all suites
+    # return list of test cases
+    #
+    def _get_tests(self,suite,tests=[]):
+
+        if suite.tests:
+          tests += suite.tests
+
+        if not suite.tests:
+            [self._get_tests(s,tests) for s in suite.suites]
+
+        return tests
+
+    #
+    # return test in dictionary 
+    #
+    def _parse_test(self,test):
+        logger.info('Parsing test: %s' % test.name) 
+        
+        test_doc = {}
+        test_doc['doc']         = test.doc 
+        test_doc['elapsedtime'] = test.elapsedtime
+        test_doc['endtime']     = self._format_robot_timestamp(test.endtime).\
+                                  strftime('%Y-%m-%d %H:%M:%S')
+        test_doc['starttime'] = self._format_robot_timestamp(test.starttime).\
+                                  strftime('%Y-%m-%d %H:%M:%S')      
+        test_doc['tags']         = test.tags
+        test_doc['status']      = test.status
+        test_doc['test_id']     = test.id
+        test_doc['keywords']    = test.keywords
+        test_doc['message']     = test.message
+        test_doc['passed']      = test.passed
+        test_doc['critical']    = test.critical
+        test_doc['longname']    = test.longname
+        test_doc['name']        = test.name
+        test_doc['parent']      = test.parent
+        test_doc['timeout']     = test.timeout
+
+        return test_doc
 
     def _format_robot_timestamp(self, timestamp):
         return datetime.strptime(timestamp, '%Y%m%d %H:%M:%S.%f')
