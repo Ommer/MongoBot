@@ -8,7 +8,7 @@ from robot.api import ExecutionResult
 
 from mongobot.reader.robot_results_parser import RobotResultsParser
 
-
+logging.basicConfig(level=logging.INFO)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -27,11 +27,15 @@ logging.basicConfig(level=logging.DEBUG)
 # parser = RobotResultsParser('output3.xml')
 # parser.demo()
 
-parser = RobotResultsParser(sys.argv[1])
+parser = RobotResultsParser(sys.argv[1], include_keywords=True)
 suite = parser.test_run.suite
-doc = parser._parse_suite(suite.suites[0])
+# doc = parser._parse_test(suite.suites[0].tests[0])
+doc = parser._parse_suite(suite)
 
-# print pprint.pprint(doc, indent=4)
+# keyowrds = suite.tests[0].keywords
+# print keyowrds
+
+print pprint.pprint(doc, indent=4)
 
 parser.traverse_suites()
-parser.suite_test_cases()
+# parser.suite_test_cases()
