@@ -47,7 +47,7 @@ class RobotResultsParser(object):
 
 
     def _parse_suite(self, suite):
-        logger.info('Parsing suite "%s"', suite.longname)
+        logger.debug('Parsing suite "%s"', suite.longname)
 
         suite_doc = {}
         suite_doc['suite_id'] = suite.id
