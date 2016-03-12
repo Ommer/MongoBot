@@ -40,6 +40,7 @@ class RobotResultsParser(object):
         if suite.tests:
             for test in suite.tests: 
                 test_doc = self._parse_test(test)
+                print test_doc
                 # add it to tests collection (mongo)
 
         for child_suite in suite.suites:
