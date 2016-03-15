@@ -14,7 +14,7 @@ class RobotResultsParser(object):
         self.xml_file = xml_file
         self.include_keywords = include_keywords
         self.test_run = ExecutionResult(xml_file, include_keywords=include_keywords)
-        self.test_run_id = ObjectId()
+        self.test_run_id = ObjectId().__str__()
         run_name = 'run_%s' % datetime.utcnow().strftime('%Y_%m_%d') \
                    if not run_name else run_name
         self.test_run_doc = { '_id': ObjectId(), 
@@ -23,7 +23,10 @@ class RobotResultsParser(object):
                               }
         logger.info('Parsing xml file for run %s' % run_name)
         # inser run_id into runs collection 
+        self.db = db
 
+        self.report_id = self.db.report.insert_one(self.test_run_doc)
+        print self.report_id
 
     def traverse_suites(self):
         self._traverse_suites(self.test_run.suite)
@@ -34,14 +37,15 @@ class RobotResultsParser(object):
 
         logger.debug("traversing suite '%s'", suite.longname)
         suite_doc = self._parse_suite(suite)
-        # insert suite_doc into suites collection 
-        pass 
-
+        # insert suite_doc into suites collection
+        self.db.report.insert_one(suite_doc) 
+       
         if suite.tests:
+          
             for test in suite.tests: 
                 test_doc = self._parse_test(test)
-                print test_doc
-                # add it to tests collection (mongo)
+                self.db.report.insert_one(test_doc)
+        
 
         for child_suite in suite.suites:
             self._traverse_suites(child_suite)
@@ -103,7 +107,7 @@ class RobotResultsParser(object):
                                   strftime('%Y-%m-%d %H:%M:%S')
         test_doc['starttime'] = self._format_robot_timestamp(test.starttime).\
                                   strftime('%Y-%m-%d %H:%M:%S')      
-        test_doc['tags'] = test.tags
+        test_doc['tags'] = [tgs.encode('utf-8') for tgs in test.tags]
         test_doc['status'] = test.status
         test_doc['test_id'] = test.id
         test_doc['message'] = test.message
@@ -111,7 +115,8 @@ class RobotResultsParser(object):
         test_doc['critical'] = test.critical
         test_doc['longname'] = test.longname
         test_doc['name'] = test.name
-        test_doc['parent'] = test.parent
+        test_doc['parent'] = str(test.parent)
+   
         test_doc['timeout'] = test.timeout
 
         test_doc['keywords'] = self._parse_keywords(test.keywords)

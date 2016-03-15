@@ -1,14 +1,14 @@
-from pymongo import MongoClient
+# from pymongo import MongoClient
 
 
 
 
-class RobotDatabase(object):
+# class RobotMongoDatabase(object):
 
-	def __init__(self, host, port, verbose_stream):
+# 	def __init__(self, host, port, verbose_stream):
 
-		self._connection = self._connect(host,port)
+# 		self._connection = self._connect(host,port)
 
-	def _connect(self, host, port):
-		print "- Establishing Mongo database connection"
-		return MongoClient(host,port)
+# 	def _connect(self, host, port):
+# 		print "- Establishing Mongo database connection"
+# 		return MongoClient(host,port)
