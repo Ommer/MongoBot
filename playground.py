@@ -43,5 +43,8 @@ doc = parser._parse_suite(suite)
 print pprint.pprint(doc, indent=4)
 
 parser.traverse_suites()
-#parser.suite_test_cases()
-#print db.report.fine_one()
+
+#print dir(db)
+cursor=RDatabase.get_collection(db)
+for doc in cursor:
+	print pprint.pprint(doc, indent=4)

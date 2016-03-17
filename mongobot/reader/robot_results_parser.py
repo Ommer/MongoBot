@@ -5,6 +5,7 @@ import re
 from bson import ObjectId 
 from robot.api import ExecutionResult
 
+
 logger = logging.getLogger(__name__)
 
 class RobotResultsParser(object):
@@ -13,6 +14,7 @@ class RobotResultsParser(object):
     def __init__(self, xml_file, include_keywords=False, db=None, run_name=''):
         self.xml_file = xml_file
         self.include_keywords = include_keywords
+        self.db = db
         self.test_run = ExecutionResult(xml_file, include_keywords=include_keywords)
         self.test_run_id = ObjectId().__str__()
         run_name = 'run_%s' % datetime.utcnow().strftime('%Y_%m_%d') \
@@ -22,30 +24,25 @@ class RobotResultsParser(object):
                               'run_name': run_name
                               }
         logger.info('Parsing xml file for run %s' % run_name)
-        # inser run_id into runs collection 
-        self.db = db
-
-        self.report_id = self.db.report.insert_one(self.test_run_doc)
-        print self.report_id
-
+        
+        self.db.reports.insert_one(self.test_run_doc)
+       
     def traverse_suites(self):
         self._traverse_suites(self.test_run.suite)
-
+        
 
     def _traverse_suites(self, suite):
         """ Recusivelly iterate through suites hierarchy""" 
 
         logger.debug("traversing suite '%s'", suite.longname)
         suite_doc = self._parse_suite(suite)
-        # insert suite_doc into suites collection
-        self.db.report.insert_one(suite_doc) 
+        self.db.reports.insert_one(suite_doc) 
        
         if suite.tests:
           
             for test in suite.tests: 
                 test_doc = self._parse_test(test)
-                self.db.report.insert_one(test_doc)
-        
+                self.db.reports.insert_one(test_doc)
 
         for child_suite in suite.suites:
             self._traverse_suites(child_suite)
@@ -127,10 +124,10 @@ class RobotResultsParser(object):
 
 
     def _parse_keywords(self, keywords):
+       
         if self.include_keywords:
-            # return [self._parse_keyword(keyword, test_run_id, suite_id, test_id, keyword_id)
-            #             for keyword in keywords]
-            pass
+            return [str(keyword) for keyword in keywords]
+            
         return []
 
 
